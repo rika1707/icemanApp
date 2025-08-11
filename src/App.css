@@ -1,0 +1,10 @@
+#root {
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-map{
+  width: 100%;
+  height: 100vh;
+}

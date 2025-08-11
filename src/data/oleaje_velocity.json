@@ -1,0 +1,113 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.68643333333333, -64.89671666666666]
+      },
+      "properties": {
+        "date": "2017-12-25",
+        "time": "12:20:00",
+        "station": "G22_B",
+        "wave_direction": 21,
+        "qf_direction": 2,
+        "wave_hight": 3,
+        "qf_hight": 2,
+        "wave_period": 4,
+        "qf_period": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.952616666666664, -64.84948333333334]
+      },
+      "properties": {
+        "date": "2017-12-16",
+        "time": "16:23:05",
+        "station": "G27",
+        "wave_direction": 7,
+        "qf_direction": 2,
+        "wave_hight": 1,
+        "qf_hight": 2,
+        "wave_period": 4,
+        "qf_period": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.762033333333335, -64.36553333333333]
+      },
+      "properties": {
+        "date": "2018-01-22",
+        "time": "12:12:00",
+        "station": "G05_B",
+        "wave_direction": 32,
+        "qf_direction": 2,
+        "wave_hight": 3,
+        "qf_hight": 2,
+        "wave_period": 4,
+        "qf_period": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-60.67045, -63.94555]
+      },
+      "properties": {
+        "date": "2018-01-25",
+        "time": "08:13:00",
+        "station": "G28_B",
+        "wave_direction": 10,
+        "qf_direction": 2,
+        "wave_hight": 1,
+        "qf_hight": 2,
+        "wave_period": 4,
+        "qf_period": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-60.7635, -63.936083333333336]
+      },
+      "properties": {
+        "date": "2018-01-24",
+        "time": "20:12:00",
+        "station": "D05",
+        "wave_direction": 30,
+        "qf_direction": 2,
+        "wave_hight": 1,
+        "qf_hight": 2,
+        "wave_period": 4,
+        "qf_period": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-60.5627, -62.979025]
+      },
+      "properties": {
+        "date": "2018-01-25",
+        "time": "16:00:00",
+        "station": "D06",
+        "wave_direction": 3,
+        "qf_direction": 2,
+        "wave_hight": 1,
+        "qf_hight": 2,
+        "wave_period": 4,
+        "qf_period": 2
+      }
+    }
+  ]
+}

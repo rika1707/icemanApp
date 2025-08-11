@@ -1,0 +1,245 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.73010, -63.98077]
+      },
+      "properties": {
+        "date": "2018-12-27",
+        "time": "12:53:00",
+        "station": "G02B",
+        "wind_direction": 128,
+        "qf_direction": 2,
+        "wind_speed": 8,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.73343, -64.39937]
+      },
+      "properties": {
+        "date": "2018-12-28",
+        "time": "10:36:00",
+        "station": "G07B",
+        "wind_direction": 13,
+        "qf_direction": 2,
+        "wind_speed": 3.7,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.75945, -64.42773]
+      },
+      "properties": {
+        "date": "2018-12-28",
+        "time": "18:17:00",
+        "station": "G08B",
+        "wind_direction": 1,
+        "qf_direction": 2,
+        "wind_speed": 7.5,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.26833, -64.13378]
+      },
+      "properties": {
+        "date": "2018-12-29",
+        "time": "11:46:00",
+        "station": "G04B",
+        "wind_direction": 273,
+        "qf_direction": 2,
+        "wind_speed": 10,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.51418, -64.06357]
+      },
+      "properties": {
+        "date": "2018-12-29",
+        "time": "17:30:00",
+        "station": "G03B",
+        "wind_direction": 315,
+        "qf_direction": 2,
+        "wind_speed": 16,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.41893, -64.23955]
+      },
+      "properties": {
+        "date": "2018-12-30",
+        "time": "11:29:00",
+        "station": "G05B",
+        "wind_direction": 225,
+        "qf_direction": 2,
+        "wind_speed": 8,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.79518, -64.27557]
+      },
+      "properties": {
+        "date": "2018-12-30",
+        "time": "18:04:00",
+        "station": "G06B",
+        "wind_direction": 274,
+        "qf_direction": 2,
+        "wind_speed": 8,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.95118, -64.49453]
+      },
+      "properties": {
+        "date": "2018-12-31",
+        "time": "10:28:00",
+        "station": "G09B",
+        "wind_direction": 90,
+        "qf_direction": 2,
+        "wind_speed": 3,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-62.06745, -64.42645]
+      },
+      "properties": {
+        "date": "2018-12-31",
+        "time": "16:55:00",
+        "station": "G10B",
+        "wind_direction": 60,
+        "qf_direction": 2,
+        "wind_speed": 6.3,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-62.22800, -64.47612]
+      },
+      "properties": {
+        "date": "2019-01-02",
+        "time": "10:43:00",
+        "station": "G11B",
+        "wind_direction": -99999,
+        "qf_direction": 9,
+        "wind_speed": 9.1,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-62.53788, -64.56155]
+      },
+      "properties": {
+        "date": "2019-01-02",
+        "time": "18:00:00",
+        "station": "G12B",
+        "wind_direction": 250,
+        "qf_direction": 2,
+        "wind_speed": 8.7,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-62.85147, -64.65405]
+      },
+      "properties": {
+        "date": "2019-01-03",
+        "time": "13:00:00",
+        "station": "G14B",
+        "wind_direction": 220,
+        "qf_direction": 2,
+        "wind_speed": 10.3,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.12618, -64.74633]
+      },
+      "properties": {
+        "date": "2019-01-03",
+        "time": "22:39:00",
+        "station": "G16B",
+        "wind_direction": 223,
+        "qf_direction": 2,
+        "wind_speed": 8.5,
+        "qf_speed": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.24315, -64.90397]
+      },
+      "properties": {
+        "date": "2019-01-04",
+        "time": "13:49:00",
+        "station": "G18B",
+        "wind_direction": -99999,
+        "qf_direction": 9,
+        "wind_speed": -99999,
+        "qf_speed": 9
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.34128, -64.95195]
+      },
+      "properties": {
+        "date": "2019-01-04",
+        "time": "20:05:00",
+        "station": "G19B",
+        "wind_direction": 55,
+        "qf_direction": 2,
+        "wind_speed": 7.3,
+        "qf_speed": 2
+      }
+    }
+  ]
+}
