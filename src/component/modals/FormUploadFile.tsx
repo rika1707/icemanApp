@@ -49,7 +49,7 @@ export default function UploadForm({ open, onClose }: Readonly<FormProps>) {
     });
 
     const onSubmit = (data: FormData) => {
-        console.log("Nombre de archivo:", data.fileName);
+        console.log("Nombre de archivo excel:", data.fileName);
         console.log("Rango de años:", data.yearRange);
         console.log("Archivo Excel:", data.excelFile?.[0]);
         handleFileUpload(data.excelFile?.[0])
