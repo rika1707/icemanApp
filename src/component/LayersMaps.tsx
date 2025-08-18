@@ -82,7 +82,7 @@ export const BaseMapSelector = ({ selectedMap, onChange, setOpenMap, openMap }: 
                         color: 'white',
                         '&.Mui-checked': { color: 'white' }
                     }} />}
-                    label="Satellite Map"
+                    label="Topo Map"
                 />
             </RadioGroup >
         </>
