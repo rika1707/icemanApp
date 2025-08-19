@@ -5,29 +5,25 @@ import Vientos from '../data/viento_antartico.json';
 import Vientos_2018 from '../data/vientos_2018.json';
 import Oleaje_2018 from '../data/oleaje_2018.json';
 import L from 'leaflet';
+import type { GroupKey, LayerKey } from './SidebarWithMap';
 
-interface layersProps {
-    layers: {
-        oleaje_2017_2018: boolean;
-        viento_2017_2018: boolean;
-        oleaje_2018_2019: boolean;
-        viento_2018_2019: boolean;
-    }
+interface LayersProps {
+    activeLayers: Record<GroupKey, LayerKey | null>
     handleFeatureClick: (feature: Feature<Geometry, GeoJsonProperties>) => void
     handleFeatureWindClick: (feature: Feature<Geometry, GeoJsonProperties>) => void
 }
 
-const LayersDataContainer = ({ layers, handleFeatureClick, handleFeatureWindClick }: layersProps) => {
+const LayersDataContainer = ({ activeLayers, handleFeatureClick, handleFeatureWindClick }: LayersProps) => {
 
     return (
         <>
-            {layers.oleaje_2017_2018 && (
+            {activeLayers["2017_2018"] === "oleaje_2017_2018" && (
                 <GeoJSON
                     key="oleaje-layer_2017"
                     data={Oleaje as any}
                     pointToLayer={(_, latlng) =>
                         L.circleMarker(latlng, {
-                            radius: 10,
+                            radius: 5,
                             fillColor: '#f00',
                             color: '#000',
                             weight: 1,
@@ -42,7 +38,7 @@ const LayersDataContainer = ({ layers, handleFeatureClick, handleFeatureWindClic
                     }}
                 />
             )}
-            {layers.viento_2017_2018 && (
+            {activeLayers["2017_2018"] === "viento_2017_2018" && (
                 <GeoJSON
                     key="viento_2017_2018-layer"
                     data={Vientos as any}
@@ -65,13 +61,13 @@ const LayersDataContainer = ({ layers, handleFeatureClick, handleFeatureWindClic
                 /> // Aquí iría VelocityLayer cuando esté listo
             )}
             {/* //2018 - 2019 */}
-            {layers.oleaje_2018_2019 && (
+            {activeLayers["2018_2019"] === "oleaje_2018_2019" && (
                 <GeoJSON
                     key="oleaje_2018_2019-layer"
                     data={Oleaje_2018 as any}
                     pointToLayer={(_, latlng) =>
                         L.circleMarker(latlng, {
-                            radius: 10,
+                            radius: 5,
                             fillColor: '#f00',
                             color: '#000',
                             weight: 1,
@@ -86,7 +82,7 @@ const LayersDataContainer = ({ layers, handleFeatureClick, handleFeatureWindClic
                     }}
                 />
             )}
-            {layers.viento_2018_2019 && (
+            {activeLayers["2018_2019"] === "viento_2018_2019" && (
                 <GeoJSON
                     key="viento_2018_2019-layer"
                     data={Vientos_2018 as any}
