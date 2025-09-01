@@ -1,17 +1,9 @@
-import { useEffect, useState, type JSX } from 'react';
+import { useEffect, useRef, useState, type JSX } from 'react';
 import {
   Drawer,
   IconButton,
   Box,
-  Typography,
-  FormControlLabel,
-  Checkbox,
   Divider,
-  List,
-  ListItem,
-  Collapse,
-  RadioGroup,
-  Radio,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MapIcon from '@mui/icons-material/Public';
@@ -23,7 +15,7 @@ import {
   LayerGroup,
   useMap,
 } from 'react-leaflet';
-import L from 'leaflet';
+import L, { Map } from 'leaflet';
 import CustomZoomControl from './CustomZoom';
 import Oleaje from '../data/oleaje_velocity.json'
 import Vientos from '../data/viento_antartico.json';
@@ -33,7 +25,6 @@ import ModalDetails from './modals/ModalDetails';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import CustomButton from './CustomButton';
 import ModalDetailsWind from './modals/ModalDetailsWind';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { BaseMapSelector } from './LayersMaps';
 import TileLayerContainer from './TileLayerContainer';
 import LayersDataContainer from './LayersDataContainer';
@@ -56,6 +47,12 @@ interface FitAllBoundsProps {
 interface SidebarWithMap {
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isWavesActive: boolean
+  isWindsActive: boolean
+  setIsWindsActivate: React.Dispatch<React.SetStateAction<boolean>>
+  setIsWavesActivate: React.Dispatch<React.SetStateAction<boolean>>
+  setMap: React.Dispatch<React.SetStateAction<Map>>
+
 }
 
 const FitAllBounds = ({ layersData }: FitAllBoundsProps) => {
@@ -82,7 +79,7 @@ const FitAllBounds = ({ layersData }: FitAllBoundsProps) => {
 };
 
 
-const SidebarWithMap = ({ open, setOpen }: Readonly<SidebarWithMap>): JSX.Element => {
+const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsActivate, isWavesActive, isWindsActive }: Readonly<SidebarWithMap>): JSX.Element => {
   const [selectedMap, setSelectedMap] = useState('baseMap');
   const [openMap, setOpenMap] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -90,18 +87,7 @@ const SidebarWithMap = ({ open, setOpen }: Readonly<SidebarWithMap>): JSX.Elemen
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedData, setSelectedData] = useState<Feature | null>(null);
   const [selectedDataWind, setSelectedDataWind] = useState<Feature | null>(null);
-  const [openCollapse, setOpenCollapse] = useState({
-    2017_2018: false,
-    2018_2019: false,
-    2019_2020: false
-  })
   const user = localStorage.getItem('user')
-  const toggleCollapse = (section: keyof typeof openCollapse) => {
-    setOpenCollapse((prev) => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
 
   const handleFeatureClick = (feature: Feature) => {
     setSelectedData(feature);
@@ -120,13 +106,6 @@ const SidebarWithMap = ({ open, setOpen }: Readonly<SidebarWithMap>): JSX.Elemen
     "2018_2019": null,
   });
 
-  const setActiveLayer = (group: GroupKey, layer: LayerKey) => {
-    setActiveLayers((prev) => ({
-      ...prev,
-      [group]: prev[group] === layer ? null : layer, // toggle dentro del grupo
-    }));
-  };
-
 
 
   return (
@@ -137,172 +116,98 @@ const SidebarWithMap = ({ open, setOpen }: Readonly<SidebarWithMap>): JSX.Elemen
         anchor="left"
         open={open}
         sx={{
-          width: 240,
+          width: 80, // más angosto porque solo hay iconos
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: 220,
+            width: 100,
             borderTop: '1px solid',
             boxSizing: 'border-box',
             backgroundColor: '#1976d2',
             color: 'white',
-            padding: 2,
+            padding: 1,
             position: 'absolute',
             zIndex: '1000',
-            height: '100%'
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       >
-        {/* Encabezado del panel */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '16px' }}>
-            Capas del Mapa
-          </Typography>
+        {/* Encabezado con botón de cierre */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: "100%" }}>
           <IconButton onClick={() => setOpen(false)} sx={{ color: 'white' }}>
             <CloseIcon />
           </IconButton>
         </Box>
-        {user && <IconButton sx={{
-          color: '#ffffff',
-          width: 'max-content'
-        }}
-          onClick={() => setOpenForm(true)}
+
+        {user && (
+          <IconButton sx={{ color: '#ffffff', my: 1 }} onClick={() => setOpenForm(true)}>
+            <FileUploadIcon />
+          </IconButton>
+        )}
+
+        <Divider sx={{ my: 1, borderColor: 'gray', width: '100%' }} />
+
+        {/* Botón Oleajes */}
+        <Box
+          display={'flex'}
+          justifyContent={isWavesActive ? 'space-evenly' : 'flex-start'}
+          gap={1}
+          height={25}
+          mb={2}
+          ml={isWavesActive ? 0 : .6}
         >
-          <FileUploadIcon />
-        </IconButton>}
+          <IconButton
+            sx={{
+              color: isWavesActive ? 'yellow' : 'white',
+              border: isWavesActive ? '1px solid yellow' : '1px solid white',
+              borderRadius: 1,
 
-        <Divider sx={{ my: 2, borderColor: 'gray' }} />
+            }}
+            onClick={() => {
+              setIsWavesActivate(true);
+              setIsWindsActivate(false);
+            }}
+          >
+            <WavesIcon />
+          </IconButton>
+          {isWavesActive && (
+            <CustomButton
+              features={Oleaje.features as Feature<Geometry, any>[]}
+              fileName="Oleajes_2017_2018.xls"
+            />
+          )}
+        </Box>
 
-        {/* Lista de capas con iconos */}
+        {/* Botón Viento */}
         <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            mb: 2,
-            boxShadow: '0px 1px rgba(255,255,255, 0.5)',
-            py: '3px'
-          }}
-          onClick={() => toggleCollapse(20172018)}>
-          <Typography sx={{ fontWeight: 500 }}>2017 - 2018</Typography>
-          {openCollapse[20172018] ? <ExpandLess /> : <ExpandMore />}
+          display={'flex'}
+          justifyContent={isWindsActive ? 'space-evenly' : 'flex-start'}
+          gap={1}
+          height={25}
+          ml={isWindsActive ? 0 : .6}
+        >
+          <IconButton
+            sx={{
+              color: isWindsActive ? 'yellow' : 'white',
+              border: isWindsActive ? '1px solid yellow' : '1px solid white',
+              borderRadius: 1,
+            }}
+            onClick={() => {
+              setIsWavesActivate(false);
+              setIsWindsActivate(true);
+            }}
+          >
+            <WindPowerIcon />
+          </IconButton>
+          {isWindsActive && (
+            <CustomButton
+              features={Vientos.features as Feature<Geometry, any>[]}
+              fileName="Vientos_2017_2018.xls"
+            />
+          )}
         </Box>
-        <Collapse in={openCollapse[20172018]}>
-          <RadioGroup
-            value={activeLayers["2017_2018"]}>
-            <List>
-              <ListItem disablePadding
-                secondaryAction={
-                  activeLayers["2017_2018"] === "oleaje_2017_2018" && <CustomButton features={Oleaje.features as Feature<Geometry, any>[]} fileName='Oleajes_2017_2018.xls' />
-                }
-              >
-                <FormControlLabel
-                  value="oleaje_2017_2018"
-                  control={<Radio
-                    sx={{
-                      color: 'white',
-                      '&.Mui-checked': {
-                        color: 'white', // color del icono cuando está seleccionado
-                      },
-                    }}
-                  />}
-                  checked={activeLayers["2017_2018"] === "oleaje_2017_2018"}
-                  onChange={() => setActiveLayer("2017_2018", "oleaje_2017_2018")}
-                  label="Oleajes"
-                />
-              </ListItem>
-              <ListItem disablePadding
-                secondaryAction={
-                  activeLayers["2017_2018"] === "viento_2017_2018" && (
-                    <CustomButton
-                      features={Vientos.features as Feature<Geometry, any>[]}
-                      fileName="Vientos_2017_2018.xls"
-                    />
-                  )
-                }
-              >
-                <FormControlLabel
-                  value="viento_2017_2018"
-                  control={<Radio
-                    sx={{
-                      color: 'white',
-                      '&.Mui-checked': {
-                        color: 'white', // color del icono cuando está seleccionado
-                      },
-                    }}
-                  />}
-                  checked={activeLayers["2017_2018"] === "viento_2017_2018"}
-                  onChange={() => setActiveLayer("2017_2018", "viento_2017_2018")}
-                  label="Viento"
-                />
-              </ListItem>
-            </List>
-          </RadioGroup>
-        </Collapse>
-        {/* //2018 - 2019 */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer',
-            mb: 2,
-            boxShadow: '0px 1px rgba(255,255,255, 0.5)',
-            py: '3px'
-          }}
-          onClick={() => toggleCollapse(20182019)}>
-          <Typography sx={{ fontWeight: 500 }}>2018 - 2019</Typography>
-          {openCollapse[20182019] ? <ExpandLess /> : <ExpandMore />}
-        </Box>
-        <Collapse in={openCollapse[20182019]}>
-          <RadioGroup value={activeLayers["2018_2019"]}>
-            <List>
-              <ListItem disablePadding
-                secondaryAction={
-                  activeLayers["2018_2019"] === "oleaje_2018_2019" && <CustomButton features={Oleaje_2018.features as Feature<Geometry, any>[]} fileName='Oleajes_2018_20189xls' />
-                }
-              >
-                <FormControlLabel
-                  value="oleaje_2018_2019"
-                  control={<Radio
-                    sx={{
-                      color: 'white',
-                      '&.Mui-checked': {
-                        color: 'white', // color del icono cuando está seleccionado
-                      },
-                    }}
-                  />}
-                  checked={activeLayers["2018_2019"] === "oleaje_2018_2019"}
-                  onChange={() => setActiveLayer("2018_2019", "oleaje_2018_2019")}
-                  label="Oleajes"
-                />
-              </ListItem>
-              <ListItem disablePadding
-                secondaryAction={
-                  activeLayers["2018_2019"] === "viento_2018_2019" && <CustomButton features={Vientos_2018.features as Feature<Geometry, any>[]} fileName='Vientoss_2018_20189xls' />
-                }
-              >
-                <FormControlLabel
-                  value="viento_2018_2019"
-                  control={<Radio
-                    sx={{
-                      color: 'white',
-                      '&.Mui-checked': {
-                        color: 'white', // color del icono cuando está seleccionado
-                      },
-                    }}
-                  />}
-                  checked={activeLayers["2018_2019"] === "viento_2018_2019"}
-                  onChange={() => setActiveLayer("2018_2019", "viento_2018_2019")}
-                  label="Viento"
-                />
-              </ListItem>
-            </List>
-          </RadioGroup>
-        </Collapse>
       </Drawer>
-
-      {/* open maps */}
       {!openMap && (
         <IconButton
           onClick={() => setOpenMap(true)}
@@ -324,8 +229,15 @@ const SidebarWithMap = ({ open, setOpen }: Readonly<SidebarWithMap>): JSX.Elemen
       )}
 
       {/* Mapa Leaflet */}
-      <MapContainer center={[4.6, -74.1]} zoom={6} style={{ height: '100%', width: '100%', zIndex: 0 }}
+      <MapContainer
+        center={[4.6, -74.1]}
+        zoom={6} style={{ height: '100%', width: '100%', zIndex: 0 }}
         zoomControl={false}
+        ref={(mapInstance) => {
+          if (mapInstance) {
+            setMap(mapInstance);
+          }
+        }}
       >
         <FitAllBounds
           layersData={[

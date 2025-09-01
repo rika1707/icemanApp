@@ -1,27 +1,15 @@
-export interface GeoProps {
-    type: string;
-    features: Feature[];
+import type { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import type { Map } from 'leaflet';
+export interface GeojsonProps {
+    rangeDate: string
+    fileName: string
+    geojson: FeatureCollection<Geometry, GeoJsonProperties>
+    map?: Map
+    markerShape?: 'circle' | 'square'
 }
 
-export interface Feature {
-    type: string;
-    geometry: Geometry;
-    properties: Properties;
-}
-
-export interface Geometry {
-    type: string;
-    coordinates: number[];
-}
-
-export interface Properties {
-    date: string;
-    time: string;
-    station: string;
-    wave_direction: number;
-    qf_direction: number;
-    wave_hight: number;
-    qf_hight: number;
-    wave_period: number;
-    qf_period: number;
+export interface ListGeojsonProps {
+    isWavesActive: boolean
+    isWindsActive: boolean
+    map: Map
 }
