@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useState, type JSX } from 'react';
 import DirectionsBoatFilledIcon from '@mui/icons-material/DirectionsBoatFilled';
 import { Button } from '@mui/material';
+import { useLocalStorageContext } from '../store/localStorageContext';
 
 
 const settings = ['Profile', 'Logout'];
@@ -24,7 +25,7 @@ interface AppBarProps {
 
 function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>): JSX.Element {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-    const user = localStorage.getItem('user')
+    const { value, setValue } = useLocalStorageContext();
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
     };
@@ -35,7 +36,7 @@ function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>
 
     return (
         <AppBar position="static">
-            <Container maxWidth='xl'>
+            <Container sx={{ mx: '0px !important', px: '0px !important', maxWidth: '100% !important' }}>
                 <Toolbar disableGutters>
                     <Box>
                         <IconButton
@@ -67,11 +68,21 @@ function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>
                         ICEMAN
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} textAlign={'end'}>
-                        {!user
-                            ? <Button color="inherit" onClick={() => setOpenLogin(true)}>Login</Button>
+                        {!value
+                            ? <Button
+                                sx={{
+                                    mr: 2,
+                                    '&:hover': {
+                                        backgroundColor: '#074dafff',
+                                    }
+                                }}
+                                color="inherit"
+                                onClick={() => setOpenLogin(true)}>
+                                Login
+                            </Button>
                             : <>
                                 <Tooltip title="Open settings">
-                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, pr: 2 }}>
                                         <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                                     </IconButton>
                                 </Tooltip>
@@ -97,7 +108,7 @@ function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>
                                             onClick={() => {
                                                 handleCloseUserMenu()
                                                 if (setting === 'Logout') {
-                                                    localStorage.removeItem('user')
+                                                    setValue("")
                                                 }
                                             }}
                                         >

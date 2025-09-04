@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import {
   Drawer,
   IconButton,
   Box,
   Divider,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MapIcon from '@mui/icons-material/Public';
@@ -29,6 +30,7 @@ import { BaseMapSelector } from './LayersMaps';
 import TileLayerContainer from './TileLayerContainer';
 import LayersDataContainer from './LayersDataContainer';
 import UploadForm from './modals/FormUploadFile';
+import { useLocalStorageContext } from '../store/localStorageContext';
 
 const CenterMap = () => {
   const map = useMap();
@@ -87,7 +89,7 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedData, setSelectedData] = useState<Feature | null>(null);
   const [selectedDataWind, setSelectedDataWind] = useState<Feature | null>(null);
-  const user = localStorage.getItem('user')
+  const { value } = useLocalStorageContext();
 
   const handleFeatureClick = (feature: Feature) => {
     setSelectedData(feature);
@@ -134,15 +136,27 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
         }}
       >
         {/* Encabezado con botón de cierre */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: "100%" }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', width: "100%" }}>
           <IconButton onClick={() => setOpen(false)} sx={{ color: 'white' }}>
             <CloseIcon />
           </IconButton>
         </Box>
 
-        {user && (
-          <IconButton sx={{ color: '#ffffff', my: 1 }} onClick={() => setOpenForm(true)}>
+        {value && (
+          <IconButton sx={{
+            color: '#ffffff',
+            my: .5,
+            display: 'flex',
+            alignItems: 'center',
+            '&:hover': {
+              borderRadius: '8px',
+              backgroundColor: '#074dafff',
+            }
+          }} onClick={() => setOpenForm(true)}>
             <FileUploadIcon />
+            <Typography variant="caption" display="block" pt={1}>
+              Cargar
+            </Typography>
           </IconButton>
         )}
 
@@ -165,7 +179,7 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
 
             }}
             onClick={() => {
-              setIsWavesActivate(true);
+              setIsWavesActivate(!isWavesActive);
               setIsWindsActivate(false);
             }}
           >
@@ -195,7 +209,7 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
             }}
             onClick={() => {
               setIsWavesActivate(false);
-              setIsWindsActivate(true);
+              setIsWindsActivate(!isWindsActive);
             }}
           >
             <WindPowerIcon />

@@ -13,15 +13,19 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
         if (isWavesActive) {
             setWaves(getWaves(undefined))
             setWinds(undefined)
+        } else {
+            setWaves(undefined)
         }
         if (isWindsActive) {
             setWinds(getWinds(undefined))
             setWaves(undefined)
+        } else {
+            setWinds(undefined)
         }
 
     }, [isWavesActive, isWindsActive]);
-    return (
-        <div className="h-72 overflow-auto bg-slate-300 text-black p-2 flex gap-1 flex-wrap">
+    return (isWavesActive || isWindsActive) && (
+        <div className="h-64 overflow-auto bg-slate-200 text-black p-2 flex gap-1 flex-wrap">
             {Waves?.map((wave: GeojsonProps) => (
                 <ItemGeo key={wave.fileName} {...wave} map={map} markerShape="circle" />
             ))}

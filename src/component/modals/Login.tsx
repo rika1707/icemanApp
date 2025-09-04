@@ -5,6 +5,7 @@ import {
     Box,
     Modal
 } from "@mui/material";
+import { useLocalStorageContext } from "../../store/localStorageContext";
 
 interface LoginProps {
     open: boolean;
@@ -18,11 +19,12 @@ type FormData = {
 
 export default function Login({ open, onClose }: Readonly<LoginProps>) {
     const { register, handleSubmit, reset } = useForm<FormData>();
+    const { setValue } = useLocalStorageContext();
 
     const onSubmit = (data: FormData) => {
         console.log("Nombre de usuario:", data.user);
         console.log("contraseña:", data.password);
-        localStorage.setItem('user', data.user)
+        setValue(data.user)
         reset()
         onClose(false)
     };
