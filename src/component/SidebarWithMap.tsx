@@ -23,8 +23,7 @@ import Vientos from '../data/viento_antartico.json';
 import Vientos_2018 from '../data/vientos_2018.json';
 import Oleaje_2018 from '../data/oleaje_2018.json';
 import ModalDetails from './modals/ModalDetails';
-import type { Feature, FeatureCollection, Geometry } from 'geojson';
-import CustomButton from './CustomButton';
+import type { Feature, FeatureCollection } from 'geojson';
 import ModalDetailsWind from './modals/ModalDetailsWind';
 import { BaseMapSelector } from './LayersMaps';
 import TileLayerContainer from './TileLayerContainer';
@@ -86,15 +85,11 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
   const [openMap, setOpenMap] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [modalOpenWind, setModalOpenWind] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState<Feature | null>(null);
+
   const [selectedDataWind, setSelectedDataWind] = useState<Feature | null>(null);
   const { value } = useLocalStorageContext();
+  const { modal: { setModalOpen, modalOpen, handleFeatureClick, selectedData } } = useLocalStorageContext()
 
-  const handleFeatureClick = (feature: Feature) => {
-    setSelectedData(feature);
-    setModalOpen(true);
-  };
 
   const handleFeatureWindClick = (feature: Feature) => {
     setSelectedDataWind(feature);
@@ -165,11 +160,9 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
         {/* Botón Oleajes */}
         <Box
           display={'flex'}
-          justifyContent={isWavesActive ? 'space-evenly' : 'flex-start'}
           gap={1}
           height={25}
           mb={2}
-          ml={isWavesActive ? 0 : .6}
         >
           <IconButton
             sx={{
@@ -185,21 +178,13 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           >
             <WavesIcon />
           </IconButton>
-          {isWavesActive && (
-            <CustomButton
-              features={Oleaje.features as Feature<Geometry, any>[]}
-              fileName="Oleajes_2017_2018.xls"
-            />
-          )}
         </Box>
 
         {/* Botón Viento */}
         <Box
           display={'flex'}
-          justifyContent={isWindsActive ? 'space-evenly' : 'flex-start'}
           gap={1}
           height={25}
-          ml={isWindsActive ? 0 : .6}
         >
           <IconButton
             sx={{
@@ -214,12 +199,6 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           >
             <WindPowerIcon />
           </IconButton>
-          {isWindsActive && (
-            <CustomButton
-              features={Vientos.features as Feature<Geometry, any>[]}
-              fileName="Vientos_2017_2018.xls"
-            />
-          )}
         </Box>
       </Drawer>
       {!openMap && (

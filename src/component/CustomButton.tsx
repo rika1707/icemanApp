@@ -7,15 +7,16 @@ interface ButtonProps {
     fileName: string
 }
 
-export default function CustomButton({ features, fileName }: ButtonProps) {
+export default function CustomButton({ features, fileName }: Readonly<ButtonProps>) {
     return (
         <IconButton edge='end' aria-label='download' sx={{
-            color: '#ffffff',
-            borderLeft: '1px solid #ffffff',
-            borderRadius: 0,
+            color: '#074dafff',
+            borderRadius: '10px',
             padding: '4px 2px',
             '&:hover': {
-                backgroundColor: '#074dafff'
+                backgroundColor: '#7d8bf3',
+
+
             }
         }}
             onClick={() => downloadFeaturesAsExcel(features, fileName)}

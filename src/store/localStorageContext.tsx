@@ -1,15 +1,26 @@
 // LocalStorageContext.tsx
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import useShowModal from "../component/hooks/useShowModal";
+import type { Feature, GeoJsonProperties, Geometry } from "geojson";
+
+interface ModalProps {
+    modalOpen: boolean;
+    selectedData: Feature<Geometry, GeoJsonProperties> | null;
+    handleFeatureClick: (feature: Feature) => void;
+    setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 interface LocalStorageContextType {
     value: string;
     setValue: (newValue: string) => void;
+    modal: ModalProps
 }
 
 const LocalStorageContext = createContext<LocalStorageContextType | undefined>(undefined);
 
 export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
     const [value, setValueState] = useState(() => localStorage.getItem("user") ?? "");
+    const modal = useShowModal()
 
     const setValue = (newValue: string) => {
         setValueState(newValue);
@@ -40,7 +51,7 @@ export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <LocalStorageContext.Provider value={{ value, setValue }}>
+        <LocalStorageContext.Provider value={{ value, setValue, modal }}>
             {children}
         </LocalStorageContext.Provider>
     );

@@ -1,6 +1,6 @@
 import L, { Map as LeafletMap, GeoJSON } from "leaflet";
 import type { GeojsonProps } from "../interface/geojson.interface";
-import type { Feature, Geometry } from "geojson";
+import type { Feature } from "geojson";
 
 // Diccionario global de capas por id
 const layersRegistry: Record<string, GeoJSON> = {};
@@ -18,6 +18,7 @@ export function toggleGeoJsonOnMap(
     geojson: GeojsonProps["geojson"],
     id: string,
     markerShape: 'circle' | 'square' = 'circle',
+    onFeatureClick: (feature: Feature) => void,
     style?: L.PathOptions
 ): GeoJSON | null {
     // Si ya existe → quitarla
@@ -67,7 +68,7 @@ export function toggleGeoJsonOnMap(
         onEachFeature: (feature, layer) => {
             if (feature.properties?.station) {
                 layer.on({
-                    click: () => handleFeatureClick(feature)
+                    click: () => onFeatureClick(feature)
                 });
             }
         },
