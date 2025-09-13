@@ -7,18 +7,36 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, CardActions } from '@mui/material';
 import CustomButton from './CustomButton';
 import type { Feature, Geometry } from 'geojson';
-import { useState } from 'react';
 import { useLocalStorageContext } from '../store/localStorageContext';
+import L from "leaflet";
 
 export default function ItemGeo({ rangeDate, fileName, geojson, map, markerShape }: Readonly<GeojsonProps>) {
-    const [isVisible, setisVisible] = useState<boolean>(false);
-    const { modal: { handleFeatureClick } } = useLocalStorageContext()
+    const { modal: { handleFeatureClick }, visibility, toggleVisibility } = useLocalStorageContext()
+
+    const isVisible = visibility[fileName] ?? false;
+
     return (
         map ? (<Card sx={{ maxWidth: 275, position: 'relative' }} variant="outlined">
             <CardContent
                 onClick={() => {
                     toggleGeoJsonOnMap(map, geojson, fileName, markerShape, handleFeatureClick)
-                    setisVisible(prev => !prev)
+                    toggleVisibility(fileName);
+                    setTimeout(() => {
+                        const bounds = L.latLngBounds([]);
+
+                        map.eachLayer((l: any) => {
+                            if (l instanceof L.GeoJSON) {
+                                const lb = l.getBounds();
+                                if (lb.isValid()) {
+                                    bounds.extend(lb);
+                                }
+                            }
+                        });
+
+                        if (bounds.isValid()) {
+                            map.fitBounds(bounds, { padding: [30, 30] });
+                        }
+                    }, 0);
                 }}
                 sx={{
                     cursor: 'pointer'

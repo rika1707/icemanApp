@@ -13,14 +13,24 @@ interface ModalProps {
 interface LocalStorageContextType {
     value: string;
     setValue: (newValue: string) => void;
-    modal: ModalProps
+    modal: ModalProps;
+    visibility: Record<string, boolean>;
+    toggleVisibility: (id: string) => void;
 }
 
 const LocalStorageContext = createContext<LocalStorageContextType | undefined>(undefined);
 
 export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
     const [value, setValueState] = useState(() => localStorage.getItem("user") ?? "");
+    const [visibility, setVisibility] = useState<Record<string, boolean>>({});
     const modal = useShowModal()
+
+    const toggleVisibility = (id: string) => {
+        setVisibility(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
 
     const setValue = (newValue: string) => {
         setValueState(newValue);
@@ -51,7 +61,7 @@ export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <LocalStorageContext.Provider value={{ value, setValue, modal }}>
+        <LocalStorageContext.Provider value={{ value, setValue, modal, visibility, toggleVisibility }}>
             {children}
         </LocalStorageContext.Provider>
     );

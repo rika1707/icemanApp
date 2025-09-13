@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from 'react';
+import { useState, type JSX } from 'react';
 import {
   Drawer,
   IconButton,
@@ -16,18 +16,11 @@ import {
   LayerGroup,
   useMap,
 } from 'react-leaflet';
-import L, { Map } from 'leaflet';
+import { Map } from 'leaflet';
 import CustomZoomControl from './CustomZoom';
-import Oleaje from '../data/oleaje_velocity.json'
-import Vientos from '../data/viento_antartico.json';
-import Vientos_2018 from '../data/vientos_2018.json';
-import Oleaje_2018 from '../data/oleaje_2018.json';
 import ModalDetails from './modals/ModalDetails';
-import type { Feature, FeatureCollection } from 'geojson';
-import ModalDetailsWind from './modals/ModalDetailsWind';
 import { BaseMapSelector } from './LayersMaps';
 import TileLayerContainer from './TileLayerContainer';
-import LayersDataContainer from './LayersDataContainer';
 import UploadForm from './modals/FormUploadFile';
 import { useLocalStorageContext } from '../store/localStorageContext';
 
@@ -37,13 +30,6 @@ const CenterMap = () => {
   return null;
 };
 
-export type GroupKey = "2017_2018" | "2018_2019";
-
-export type LayerKey = "oleaje_2017_2018" | "viento_2017_2018" | "oleaje_2018_2019" | "viento_2018_2019";
-
-interface FitAllBoundsProps {
-  layersData: { data: FeatureCollection; active: boolean }[];
-}
 
 interface SidebarWithMap {
   open: boolean,
@@ -56,53 +42,13 @@ interface SidebarWithMap {
 
 }
 
-const FitAllBounds = ({ layersData }: FitAllBoundsProps) => {
-  const map = useMap();
-
-  useEffect(() => {
-    const visibleLayers = layersData.filter(l => l.active && l.data);
-
-    if (visibleLayers.length > 0) {
-      const bounds = L.latLngBounds([]);
-
-      visibleLayers.forEach(layerInfo => {
-        const geoLayer = L.geoJSON(layerInfo.data);
-        bounds.extend(geoLayer.getBounds());
-      });
-
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50] });
-      }
-    }
-  }, [layersData, map]);
-
-  return null;
-};
-
 
 const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsActivate, isWavesActive, isWindsActive }: Readonly<SidebarWithMap>): JSX.Element => {
   const [selectedMap, setSelectedMap] = useState('baseMap');
   const [openMap, setOpenMap] = useState(false);
   const [openForm, setOpenForm] = useState(false);
-  const [modalOpenWind, setModalOpenWind] = useState(false);
-
-  const [selectedDataWind, setSelectedDataWind] = useState<Feature | null>(null);
   const { value } = useLocalStorageContext();
-  const { modal: { setModalOpen, modalOpen, handleFeatureClick, selectedData } } = useLocalStorageContext()
-
-
-  const handleFeatureWindClick = (feature: Feature) => {
-    setSelectedDataWind(feature);
-    setModalOpenWind(true);
-  };
-
-
-
-  const [activeLayers, setActiveLayers] = useState<Record<GroupKey, LayerKey | null>>({
-    "2017_2018": null,
-    "2018_2019": null,
-  });
-
+  const { modal: { setModalOpen, modalOpen, selectedData } } = useLocalStorageContext()
 
 
   return (
@@ -232,14 +178,6 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           }
         }}
       >
-        <FitAllBounds
-          layersData={[
-            { data: Oleaje as any, active: activeLayers["2017_2018"] === "oleaje_2017_2018" },
-            { data: Vientos as any, active: activeLayers["2017_2018"] === "viento_2017_2018" },
-            { data: Oleaje_2018 as any, active: activeLayers["2017_2018"] === "oleaje_2018_2019" },
-            { data: Vientos_2018 as any, active: activeLayers["2017_2018"] === "viento_2018_2019" },
-          ]}
-        />
         <BaseMapSelector
           selectedMap={selectedMap}
           onChange={(value: string) => setSelectedMap(value)}
@@ -250,21 +188,11 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
         <CenterMap />
         <LayerGroup>
           <TileLayerContainer selectedMap={selectedMap} />
-          <LayersDataContainer
-            activeLayers={activeLayers}
-            handleFeatureClick={handleFeatureClick}
-            handleFeatureWindClick={handleFeatureWindClick}
-          />
         </LayerGroup>
         <ModalDetails
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           feature={selectedData}
-        />
-        <ModalDetailsWind
-          open={modalOpenWind}
-          onClose={() => setModalOpenWind(false)}
-          feature={selectedDataWind}
         />
         <UploadForm
           open={openForm}

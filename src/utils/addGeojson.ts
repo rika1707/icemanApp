@@ -48,7 +48,7 @@ export function toggleGeoJsonOnMap(
             }
             if (markerShape === "square") {
                 // dibuja un rectángulo de 10x10m en la posición
-                const size = 0.0009; // aprox 11m, ajusta según zoom
+                const size = 0.0030; // aprox 11m, ajusta según zoom
                 return L.rectangle(
                     [
                         [latlng.lat - size, latlng.lng - size],
@@ -70,6 +70,10 @@ export function toggleGeoJsonOnMap(
                 layer.on({
                     click: () => onFeatureClick(feature)
                 });
+                layer.bindTooltip(
+                    `<strong>Estación:</strong> ${feature.properties.station}`,
+                    { permanent: false, direction: "top" }
+                );
             }
         },
     });

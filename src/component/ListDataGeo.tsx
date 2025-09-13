@@ -25,7 +25,7 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
 
     }, [isWavesActive, isWindsActive]);
     return (isWavesActive || isWindsActive) && (
-        <div className="h-64 overflow-auto bg-slate-200 text-black p-2 flex gap-1 flex-wrap">
+        <div className="h-56 overflow-auto bg-slate-200 text-black p-2 flex gap-1 flex-wrap">
             {Waves?.map((wave: GeojsonProps) => (
                 <ItemGeo key={wave.fileName} {...wave} map={map} markerShape="circle" />
             ))}
