@@ -1,6 +1,6 @@
 import L, { Map as LeafletMap, GeoJSON } from "leaflet";
 import type { GeojsonProps } from "../interface/geojson.interface";
-import type { Feature } from "geojson";
+import type { Feature, Point, Geometry } from "geojson";
 
 // Diccionario global de capas por id
 const layersRegistry: Record<string, GeoJSON> = {};
@@ -17,16 +17,18 @@ export function toggleGeoJsonOnMap(
     map: LeafletMap,
     geojson: GeojsonProps["geojson"],
     id: string,
-    markerShape: 'circle' | 'square' = 'circle',
+    markerShape: 'circle-red' | 'circle-blue' = 'circle-red',
     onFeatureClick: (feature: Feature) => void,
     style?: L.PathOptions
 ): GeoJSON | null {
-    // Si ya existe → quitarla
     if (layersRegistry[id]) {
         map.removeLayer(layersRegistry[id]);
         delete layersRegistry[id];
         return null;
     }
+
+    // Agrupar features por ubicación
+    const featuresByLocation = findFeaturesAtSameLocation(geojson);
 
     // Crear capa GeoJSON
     const geoJsonLayer = L.geoJSON(geojson, {
@@ -36,7 +38,7 @@ export function toggleGeoJsonOnMap(
             opacity: 0.6,
         },
         pointToLayer: (_feature, latlng) => {
-            if (markerShape === "circle") {
+            if (markerShape === "circle-red") {
                 return L.circleMarker(latlng, {
                     radius: 5,
                     fillColor: "#f00",
@@ -46,21 +48,15 @@ export function toggleGeoJsonOnMap(
                     fillOpacity: 0.8,
                 });
             }
-            if (markerShape === "square") {
-                // dibuja un rectángulo de 10x10m en la posición
-                const size = 0.0030; // aprox 11m, ajusta según zoom
-                return L.rectangle(
-                    [
-                        [latlng.lat - size, latlng.lng - size],
-                        [latlng.lat + size, latlng.lng + size],
-                    ],
-                    {
-                        color: "#000",
-                        weight: 1,
-                        fillColor: "#00f",
-                        fillOpacity: 0.8,
-                    }
-                );
+            if (markerShape === "circle-blue") {
+                return L.circleMarker(latlng, {
+                    radius: 5,
+                    fillColor: "#00f",
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8,
+                });
             }
 
             return L.marker(latlng); // fallback
@@ -68,12 +64,20 @@ export function toggleGeoJsonOnMap(
         onEachFeature: (feature, layer) => {
             if (feature.properties?.station) {
                 layer.on({
-                    click: () => onFeatureClick(feature)
+                    click: (e) => {
+                        L.DomEvent.stopPropagation(e);
+                        const coords = feature.geometry.coordinates;
+                        const key = `${coords[0]},${coords[1]}`;
+                        const features = featuresByLocation[key];
+
+                        // Si hay múltiples features en esta ubicación, pasarlos todos
+                        if (features && features.length > 1) {
+                            onFeatureClick(features[0], features);
+                        } else {
+                            onFeatureClick(feature);
+                        }
+                    }
                 });
-                layer.bindTooltip(
-                    `<strong>Estación:</strong> ${feature.properties.station}`,
-                    { permanent: false, direction: "top" }
-                );
             }
         },
     });
@@ -86,5 +90,25 @@ export function toggleGeoJsonOnMap(
     map.fitBounds(geoJsonLayer.getBounds());
 
     return geoJsonLayer;
+}
+
+// Función para agrupar features por ubicación
+function findFeaturesAtSameLocation(geojson: GeojsonProps["geojson"]) {
+    const featuresByLocation: Record<string, Feature[]> = {};
+
+    geojson.features.forEach((feature) => {
+        const geometry = feature.geometry as Point;
+        if (geometry.type === 'Point') {
+            const coords = geometry.coordinates;
+            const key = `${coords[0]},${coords[1]}`;
+
+            if (!featuresByLocation[key]) {
+                featuresByLocation[key] = [];
+            }
+            featuresByLocation[key].push(feature);
+        }
+    });
+
+    return featuresByLocation;
 }
 

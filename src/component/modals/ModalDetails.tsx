@@ -1,7 +1,9 @@
 import type { Feature, Geometry } from 'geojson';
 import CloseIcon from '@mui/icons-material/Close';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import React from 'react';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import React, { useEffect, useState } from 'react';
 import {
     Modal,
     Box,
@@ -15,7 +17,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper
+    Paper,
 } from '@mui/material';
 import { downloadFeatureAsExcel } from '../../utils/exportExcel';
 
@@ -23,6 +25,7 @@ interface ModalProps {
     open: boolean;
     onClose: () => void;
     feature: Feature | null;
+    features?: Feature[];
 }
 
 const style = {
@@ -39,9 +42,30 @@ const style = {
     overflowY: 'auto'
 };
 
-const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature }) => {
+const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features = [] }) => {
+    const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
+
+    useEffect(() => {
+        setCurrentFeatureIndex(0);
+    }, [feature]);
+
     if (!feature) return null;
-    const { properties, geometry } = feature;
+
+    const showNavigation = features.length > 1;
+    const currentFeature = features[currentFeatureIndex] || feature;
+    const { properties, geometry } = currentFeature;
+
+    const handleNext = () => {
+        setCurrentFeatureIndex(prev => 
+            prev === features.length - 1 ? prev : prev + 1
+        );
+    };
+
+    const handlePrevious = () => {
+        setCurrentFeatureIndex(prev => 
+            prev === 0 ? prev : prev - 1
+        );
+    };
 
     const isValidGeometry = (geom: Geometry): geom is Extract<Geometry, { coordinates: any }> => {
         return 'coordinates' in geom && Array.isArray(geom.coordinates);
@@ -78,6 +102,33 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature }) => {
                 )}
 
                 <Divider sx={{ my: 2 }} />
+
+                {/* Navegación entre features */}
+                {showNavigation && (
+                    <Box sx={{ 
+                        mt: 2, 
+                        mb: 3, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between' 
+                    }}>
+                        <IconButton 
+                            onClick={handlePrevious}
+                            disabled={currentFeatureIndex === 0}
+                        >
+                            <NavigateBeforeIcon />
+                        </IconButton>
+                        <Typography>
+                            {currentFeatureIndex + 1} de {features.length}
+                        </Typography>
+                        <IconButton 
+                            onClick={handleNext}
+                            disabled={currentFeatureIndex === features.length - 1}
+                        >
+                            <NavigateNextIcon />
+                        </IconButton>
+                    </Box>
+                )}
 
                 {/* Tabla dinámica */}
                 {properties && (

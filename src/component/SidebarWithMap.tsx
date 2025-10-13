@@ -4,13 +4,15 @@ import {
   IconButton,
   Box,
   Divider,
-  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MapIcon from '@mui/icons-material/Public';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import WavesIcon from '@mui/icons-material/Waves';
 import WindPowerIcon from '@mui/icons-material/Air';
+import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
+import AnchorIcon from '@mui/icons-material/Anchor';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import {
   MapContainer,
   LayerGroup,
@@ -48,21 +50,31 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
   const [openMap, setOpenMap] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const { value } = useLocalStorageContext();
-  const { modal: { setModalOpen, modalOpen, selectedData } } = useLocalStorageContext()
+  const { modal: { setModalOpen, modalOpen, selectedData, relatedFeatures } } = useLocalStorageContext()
 
+
+  const platformTypes = [
+    { name: 'Barcos', icon: <DirectionsBoatIcon /> },
+    { name: 'Boyas', icon: <AnchorIcon /> },
+    { name: 'Estaciones', icon: <LocationOnIcon /> }
+  ];
+
+  const dataTypes = [
+    { name: 'Olas', icon: <WavesIcon />, active: isWavesActive },
+    { name: 'Viento', icon: <WindPowerIcon />, active: isWindsActive }
+  ];
 
   return (
     <Box sx={{ height: 'calc(100vh - 64px)', width: '100vw', position: 'relative' }}>
-      {/* Sidebar personalizado */}
       <Drawer
         variant="persistent"
         anchor="left"
         open={open}
         sx={{
-          width: 80, // más angosto porque solo hay iconos
+          width: 200,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: 100,
+            width: 250,
             borderTop: '1px solid',
             boxSizing: 'border-box',
             backgroundColor: '#1976d2',
@@ -71,13 +83,11 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
             position: 'absolute',
             zIndex: '1000',
             height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
           },
         }}
       >
         {/* Encabezado con botón de cierre */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', width: "100%" }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
           <IconButton onClick={() => setOpen(false)} sx={{ color: 'white' }}>
             <CloseIcon />
           </IconButton>
@@ -87,64 +97,75 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           <IconButton sx={{
             color: '#ffffff',
             my: .5,
-            display: 'flex',
-            alignItems: 'center',
             '&:hover': {
               borderRadius: '8px',
               backgroundColor: '#074dafff',
             }
           }} onClick={() => setOpenForm(true)}>
             <FileUploadIcon />
-            <Typography variant="caption" display="block" pt={1}>
-              Cargar
-            </Typography>
           </IconButton>
         )}
 
-        <Divider sx={{ my: 1, borderColor: 'gray', width: '100%' }} />
+        <Divider sx={{ my: 1, borderColor: 'gray' }} />
 
-        {/* Botón Oleajes */}
-        <Box
-          display={'flex'}
-          gap={1}
-          height={25}
-          mb={2}
-        >
-          <IconButton
-            sx={{
-              color: isWavesActive ? 'yellow' : 'white',
-              border: isWavesActive ? '1px solid yellow' : '1px solid white',
-              borderRadius: 1,
+        {/* Matriz de datos */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+          {/* Header row */}
+          <Box sx={{ display: 'flex', gap: 2, ml: 8.5 }}>
+            {platformTypes.map((platform, index) => (
+              <IconButton key={index} sx={{
+                color: 'white',
+                border: '1px solid white',
+                borderRadius: 1,
+                width: 35,
+                height: 35,
+                padding: 0,
+              }}>
+                {platform.icon}
+              </IconButton>
+            ))}
+          </Box>
 
-            }}
-            onClick={() => {
-              setIsWavesActivate(!isWavesActive);
-              setIsWindsActivate(false);
-            }}
-          >
-            <WavesIcon />
-          </IconButton>
-        </Box>
-
-        {/* Botón Viento */}
-        <Box
-          display={'flex'}
-          gap={1}
-          height={25}
-        >
-          <IconButton
-            sx={{
-              color: isWindsActive ? 'yellow' : 'white',
-              border: isWindsActive ? '1px solid yellow' : '1px solid white',
-              borderRadius: 1,
-            }}
-            onClick={() => {
-              setIsWavesActivate(false);
-              setIsWindsActivate(!isWindsActive);
-            }}
-          >
-            <WindPowerIcon />
-          </IconButton>
+          {/* Data rows */}
+          {dataTypes.map((dataType, rowIndex) => (
+            <Box key={rowIndex} sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 2 }}>
+              <IconButton
+                sx={{
+                  color: dataType.active ? 'yellow' : 'white',
+                  border: dataType.active ? '1px solid yellow' : '1px solid white',
+                  borderRadius: 1,
+                  width: 35,
+                  height: 35,
+                  padding: 0
+                }}
+                onClick={() => {
+                  if (dataType.name === 'Olas') {
+                    setIsWavesActivate(!isWavesActive);
+                    setIsWindsActivate(false);
+                  } else {
+                    setIsWindsActivate(!isWindsActive);
+                    setIsWavesActivate(false);
+                  }
+                }}
+              >
+                {dataType.icon}
+              </IconButton>
+              {platformTypes.map((_, colIndex) => (
+                <IconButton
+                  key={colIndex}
+                  sx={{
+                    color: 'white',
+                    border: '1px solid white',
+                    borderRadius: 1,
+                    width: 35,
+                    height: 35,
+                    padding: 0
+                  }}
+                >
+                </IconButton>
+              ))}
+            </Box>
+          ))}
         </Box>
       </Drawer>
       {!openMap && (
@@ -193,6 +214,7 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           feature={selectedData}
+          features={relatedFeatures}
         />
         <UploadForm
           open={openForm}
@@ -202,5 +224,4 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
     </Box>
   );
 };
-
 export default SidebarWithMap;

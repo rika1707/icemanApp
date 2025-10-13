@@ -5,7 +5,7 @@ export interface GeojsonProps {
     fileName: string
     geojson: FeatureCollection<Geometry, GeoJsonProperties>
     map?: Map
-    markerShape?: 'circle' | 'square'
+    markerShape?: 'circle-red' | 'circle-blue'
 }
 
 export interface ListGeojsonProps {
