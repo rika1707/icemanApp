@@ -21,7 +21,7 @@ export const BaseMapSelector = ({ selectedMap, onChange, setOpenMap, openMap }: 
                 zIndex: 1200,
                 position: 'absolute',
                 width: '200px',
-                top: 16,
+                top: 50,
                 transition: 'right .3s ease',
                 right: `${openMap ? 0 : '-20%'}`,
                 backgroundColor: '#1976d1',

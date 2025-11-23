@@ -6,6 +6,7 @@ import type { Feature, GeoJsonProperties, Geometry } from "geojson";
 interface ModalProps {
     modalOpen: boolean;
     selectedData: Feature<Geometry, GeoJsonProperties> | null;
+    relatedFeatures?: Feature<Geometry, GeoJsonProperties>[];
     handleFeatureClick: (feature: Feature) => void;
     setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -16,6 +17,9 @@ interface LocalStorageContextType {
     modal: ModalProps;
     visibility: Record<string, boolean>;
     toggleVisibility: (id: string) => void;
+    geoChipArray: string[];
+    addGeoChip: (fileName: string) => void;
+    removeGeoChip: (fileName: string) => void;
 }
 
 const LocalStorageContext = createContext<LocalStorageContextType | undefined>(undefined);
@@ -24,6 +28,7 @@ export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
     const [value, setValueState] = useState(() => localStorage.getItem("user") ?? "");
     const [visibility, setVisibility] = useState<Record<string, boolean>>({});
     const modal = useShowModal()
+    const [geoChipArray, setGeoChipArray] = useState<string[]>([])
 
     const toggleVisibility = (id: string) => {
         setVisibility(prev => ({
@@ -31,6 +36,14 @@ export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
             [id]: !prev[id]
         }));
     };
+
+    const addGeoChip = (fileName: string) => {
+        setGeoChipArray(prev => [...prev, fileName]);
+    }
+
+    const removeGeoChip = (fileName: string) => {
+        setGeoChipArray(prev => prev.filter(name => name !== fileName));
+    }
 
     const setValue = (newValue: string) => {
         setValueState(newValue);
@@ -61,7 +74,17 @@ export const LocalStorageProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <LocalStorageContext.Provider value={{ value, setValue, modal, visibility, toggleVisibility }}>
+        <LocalStorageContext.Provider
+            value={{
+                value,
+                setValue,
+                modal,
+                visibility,
+                toggleVisibility,
+                geoChipArray,
+                addGeoChip,
+                removeGeoChip
+            }}>
             {children}
         </LocalStorageContext.Provider>
     );

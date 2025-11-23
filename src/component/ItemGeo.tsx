@@ -10,21 +10,26 @@ import type { Feature, Geometry } from 'geojson';
 import { useLocalStorageContext } from '../store/localStorageContext';
 import L from "leaflet";
 
-export default function ItemGeo({ rangeDate, fileName, geojson, map, markerShape }: Readonly<GeojsonProps>) {
-    const { modal: { handleFeatureClick }, visibility, toggleVisibility } = useLocalStorageContext()
+export default function ItemGeo({ fileName, geojson, rangeDate, map, markerShape }: Readonly<GeojsonProps>) {
+    const { modal: { handleFeatureClick }, visibility, toggleVisibility, addGeoChip, removeGeoChip } = useLocalStorageContext()
 
     const isVisible = visibility[fileName] ?? false;
 
     return (
-        map ? (<Card sx={{ maxWidth: 275, position: 'relative' }} variant="outlined">
+        map ? (<Card sx={{ maxWidth: 250, position: 'relative' }} variant="outlined">
             <CardContent
                 onClick={() => {
                     toggleGeoJsonOnMap(map, geojson, fileName, markerShape, handleFeatureClick)
                     toggleVisibility(fileName);
+                    if (isVisible) {
+                        removeGeoChip(fileName);
+                    } else {
+                        addGeoChip(fileName);
+                    }
                     setTimeout(() => {
                         const bounds = L.latLngBounds([]);
 
-                        map.eachLayer((l: any) => {
+                        map?.eachLayer((l: any) => {
                             if (l instanceof L.GeoJSON) {
                                 const lb = l.getBounds();
                                 if (lb.isValid()) {
@@ -34,7 +39,7 @@ export default function ItemGeo({ rangeDate, fileName, geojson, map, markerShape
                         });
 
                         if (bounds.isValid()) {
-                            map.fitBounds(bounds, { padding: [30, 30] });
+                            map?.fitBounds(bounds, { padding: [30, 30] });
                         }
                     }, 0);
                 }}
@@ -51,7 +56,7 @@ export default function ItemGeo({ rangeDate, fileName, geojson, map, markerShape
                     {fileName.toUpperCase()}
                 </Typography>
             </CardContent>
-            <CardActions sx={{ position: 'absolute', right: '1rem', bottom: '4px' }}>
+            <CardActions sx={{ justifyContent: 'flex-end', paddingRight: 2 }}>
                 <CustomButton
                     features={geojson.features as Feature<Geometry, any>[]}
                     fileName={`${fileName}.xls`}

@@ -21,6 +21,8 @@ import {
 } from '@mui/material';
 import { downloadFeatureAsExcel } from '../../utils/exportExcel';
 
+const keyExclude: string[] = ['objectid', 'globalid', 'created_date_ms', 'last_edited_date_ms']
+
 interface ModalProps {
     open: boolean;
     onClose: () => void;
@@ -56,13 +58,13 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
     const { properties, geometry } = currentFeature;
 
     const handleNext = () => {
-        setCurrentFeatureIndex(prev => 
+        setCurrentFeatureIndex(prev =>
             prev === features.length - 1 ? prev : prev + 1
         );
     };
 
     const handlePrevious = () => {
-        setCurrentFeatureIndex(prev => 
+        setCurrentFeatureIndex(prev =>
             prev === 0 ? prev : prev - 1
         );
     };
@@ -76,7 +78,7 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
             <Box sx={style} className="bg-slate-200">
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
-                        Estación: {properties?.station}
+                        Estación: {properties?.station ?? properties?.estacion}
                     </Typography>
                     <IconButton onClick={onClose}>
                         <CloseIcon />
@@ -105,14 +107,14 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
 
                 {/* Navegación entre features */}
                 {showNavigation && (
-                    <Box sx={{ 
-                        mt: 2, 
-                        mb: 3, 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'space-between' 
+                    <Box sx={{
+                        mt: 2,
+                        mb: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
                     }}>
-                        <IconButton 
+                        <IconButton
                             onClick={handlePrevious}
                             disabled={currentFeatureIndex === 0}
                         >
@@ -121,7 +123,7 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
                         <Typography>
                             {currentFeatureIndex + 1} de {features.length}
                         </Typography>
-                        <IconButton 
+                        <IconButton
                             onClick={handleNext}
                             disabled={currentFeatureIndex === features.length - 1}
                         >
@@ -142,6 +144,7 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
                             </TableHead>
                             <TableBody>
                                 {Object.entries(properties).map(([key, value]) => (
+                                    !keyExclude.includes(key) &&
                                     <TableRow key={key}>
                                         <TableCell>{key}</TableCell>
                                         <TableCell>{String(value)}</TableCell>

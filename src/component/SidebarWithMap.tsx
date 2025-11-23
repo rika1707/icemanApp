@@ -25,6 +25,8 @@ import { BaseMapSelector } from './LayersMaps';
 import TileLayerContainer from './TileLayerContainer';
 import UploadForm from './modals/FormUploadFile';
 import { useLocalStorageContext } from '../store/localStorageContext';
+import GeoChip from './modals/GeoChip';
+import type { Feature } from 'geojson';
 
 const CenterMap = () => {
   const map = useMap();
@@ -45,22 +47,21 @@ interface SidebarWithMap {
 }
 
 
-const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsActivate, isWavesActive, isWindsActive }: Readonly<SidebarWithMap>): JSX.Element => {
+const SidebarWithMap = ({ open, setOpen, setMap: setParentMap, setIsWavesActivate, setIsWindsActivate, isWavesActive, isWindsActive }: Readonly<SidebarWithMap>): JSX.Element => {
   const [selectedMap, setSelectedMap] = useState('baseMap');
   const [openMap, setOpenMap] = useState(false);
   const [openForm, setOpenForm] = useState(false);
-  const { value } = useLocalStorageContext();
-  const { modal: { setModalOpen, modalOpen, selectedData, relatedFeatures } } = useLocalStorageContext()
-
+  const { value, modal: { setModalOpen, modalOpen, selectedData, relatedFeatures, handleFeatureClick }, geoChipArray } = useLocalStorageContext();
+  const [mapInstance, setMapInstance] = useState<Map | null>(null);
 
   const platformTypes = [
     { name: 'Barcos', icon: <DirectionsBoatIcon /> },
-    { name: 'Boyas', icon: <AnchorIcon /> },
-    { name: 'Estaciones', icon: <LocationOnIcon /> }
+    //{ name: 'Boyas', icon: <AnchorIcon /> },
+    //{ name: 'Estaciones', icon: <LocationOnIcon /> }
   ];
 
   const dataTypes = [
-    { name: 'Olas', icon: <WavesIcon />, active: isWavesActive },
+    //{ name: 'Olas', icon: <WavesIcon />, active: isWavesActive },
     { name: 'Viento', icon: <WindPowerIcon />, active: isWindsActive }
   ];
 
@@ -74,7 +75,7 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           width: 200,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: 250,
+            width: 160,
             borderTop: '1px solid',
             boxSizing: 'border-box',
             backgroundColor: '#1976d2',
@@ -154,8 +155,8 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
                 <IconButton
                   key={colIndex}
                   sx={{
-                    color: 'white',
-                    border: '1px solid white',
+                    color: dataType.active ? 'yellow' : 'white',
+                    border: dataType.active ? '1px solid yellow' : '1px solid white',
                     borderRadius: 1,
                     width: 35,
                     height: 35,
@@ -193,9 +194,10 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
         center={[4.6, -74.1]}
         zoom={6} style={{ height: '100%', width: '100%', zIndex: 0 }}
         zoomControl={false}
-        ref={(mapInstance) => {
-          if (mapInstance) {
-            setMap(mapInstance);
+        ref={(map) => {
+          if (map) {
+            setMapInstance(map);
+            setParentMap(map);
           }
         }}
       >
@@ -221,6 +223,25 @@ const SidebarWithMap = ({ open, setOpen, setMap, setIsWavesActivate, setIsWindsA
           onClose={() => setOpenForm(false)}
         />
       </MapContainer>
+      <Box
+        display={'flex'}
+        gap={2}
+        position={'absolute'}
+        top={20}
+        justifyContent={'center'}
+        width={'100%'}
+      >
+        {mapInstance && geoChipArray?.map(fileName => (
+          <GeoChip
+            key={fileName}
+            label={fileName}
+            map={mapInstance}
+            geojson={value?.[fileName]?.geojson}
+            markerShape={value?.[fileName]?.markerShape || 'circle-red'}
+            onFeatureClick={handleFeatureClick}
+          />
+        ))}
+      </Box>
     </Box>
   );
 };

@@ -62,19 +62,22 @@ export function toggleGeoJsonOnMap(
             return L.marker(latlng); // fallback
         },
         onEachFeature: (feature, layer) => {
-            if (feature.properties?.station) {
+            if (feature.properties?.station || feature.properties.estacion) {
                 layer.on({
                     click: (e) => {
                         L.DomEvent.stopPropagation(e);
-                        const coords = feature.geometry.coordinates;
-                        const key = `${coords[0]},${coords[1]}`;
-                        const features = featuresByLocation[key];
+                        const geometry = feature.geometry as Point;
+                        if (geometry.type === 'Point') {
+                            const coords = geometry.coordinates;
+                            const key = `${coords[0]},${coords[1]}`;
+                            const features = featuresByLocation[key];
 
-                        // Si hay múltiples features en esta ubicación, pasarlos todos
-                        if (features && features.length > 1) {
-                            onFeatureClick(features[0], features);
-                        } else {
-                            onFeatureClick(feature);
+                            // Si hay múltiples features en esta ubicación, pasarlos todos
+                            if (features && features.length > 1) {
+                                onFeatureClick(features[0], features);
+                            } else {
+                                onFeatureClick(feature);
+                            }
                         }
                     }
                 });
