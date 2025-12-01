@@ -1,7 +1,7 @@
 import type { Feature, Geometry } from 'geojson';
 import * as XLSX from 'xlsx';
 
-export function downloadFeatureAsExcel(feature: Feature<Geometry, any>) {
+export function downloadGeojsonAsExcel(feature: Feature<Geometry, any>) {
     if (!feature) return;
 
     const { properties, geometry } = feature;

@@ -30,7 +30,7 @@ export async function getDepth(): Promise<GeojsonProps[] | null> {
         }
         const listDepth: GeojsonProps[] = await Promise.all(
             years.map(async (year: string) => {
-                const res = await fetch(`${URL_DEPTH_API}mediciones/por-anio/${year}?page=1&limit=1000`,
+                const res = await fetch(`${URL_DEPTH_API}estaciones/por-anio/${year}`,
                     {
                         method: 'GET',
                         headers: { 'Accept': 'application/json' }
@@ -42,7 +42,7 @@ export async function getDepth(): Promise<GeojsonProps[] | null> {
                 const geojson = await res.json();
                 return {
                     rangeDate: geojson.year,
-                    fileName: `Meteorologia ${geojson.year}`,
+                    fileName: `Iceman ${geojson.year}`,
                     geojson: { type: "FeatureCollection", features: geojson.features }
                 } as GeojsonProps;
             })

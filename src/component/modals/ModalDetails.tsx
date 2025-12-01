@@ -18,8 +18,10 @@ import {
     TableHead,
     TableRow,
     Paper,
+    CircularProgress
 } from '@mui/material';
-import { downloadFeatureAsExcel } from '../../utils/exportExcel';
+import { getDepthByStation } from '../../request/get-depth-by-station';
+import { useQuery } from '@tanstack/react-query';
 
 const keyExclude: string[] = ['objectid', 'globalid', 'created_date_ms', 'last_edited_date_ms']
 
@@ -47,15 +49,19 @@ const style = {
 const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features = [] }) => {
     const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
 
-    useEffect(() => {
-        setCurrentFeatureIndex(0);
-    }, [feature]);
-
-    if (!feature) return null;
-
     const showNavigation = features.length > 1;
     const currentFeature = features[currentFeatureIndex] || feature;
-    const { properties, geometry } = currentFeature;
+
+    const year: string = currentFeature?.properties?.fecha?.split('-')[0];
+    const station: string = currentFeature?.properties?.estacion;
+
+    const { isFetching, refetch } = useQuery({
+        queryKey: ['downloadFeatureExcel', station, year],
+        queryFn: async () => {
+            await getDepthByStation(station, year);
+        },
+        enabled: false,
+    });
 
     const handleNext = () => {
         setCurrentFeatureIndex(prev =>
@@ -72,20 +78,24 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
     const isValidGeometry = (geom: Geometry): geom is Extract<Geometry, { coordinates: any }> => {
         return 'coordinates' in geom && Array.isArray(geom.coordinates);
     };
+    useEffect(() => {
+        setCurrentFeatureIndex(0);
+    }, [feature]);
 
+    if (!feature) return null;
     return (
         <Modal open={open} onClose={onClose}>
             <Box sx={style} className="bg-slate-200">
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
-                        Estación: {properties?.station ?? properties?.estacion}
+                        Estación: {currentFeature.properties?.station ?? currentFeature.properties?.estacion}
                     </Typography>
                     <IconButton onClick={onClose}>
                         <CloseIcon />
                     </IconButton>
                 </Box>
 
-                {isValidGeometry(geometry) && (
+                {isValidGeometry(currentFeature.geometry) && (
                     <>
                         <Typography variant="h6">
                             <strong>Coordenadas</strong>
@@ -93,11 +103,11 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
                         <Box display={'flex'} gap={2}>
                             <Typography fontSize={14}>
                                 <strong>Latitud: </strong>
-                                <span className="text-blue-500">{geometry.coordinates[1]}</span>
+                                <span className="text-blue-500">{currentFeature.geometry.coordinates[1]}</span>
                             </Typography>
                             <Typography fontSize={14}>
                                 <strong>Longitud: </strong>
-                                <span className="text-blue-500">{geometry.coordinates[0]}</span>
+                                <span className="text-blue-500">{currentFeature.geometry.coordinates[0]}</span>
                             </Typography>
                         </Box>
                     </>
@@ -133,7 +143,7 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
                 )}
 
                 {/* Tabla dinámica */}
-                {properties && (
+                {currentFeature.properties && (
                     <TableContainer component={Paper}>
                         <Table size="small">
                             <TableHead>
@@ -143,7 +153,7 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Object.entries(properties).map(([key, value]) => (
+                                {Object.entries(currentFeature.properties).map(([key, value]) => (
                                     !keyExclude.includes(key) &&
                                     <TableRow key={key}>
                                         <TableCell>{key}</TableCell>
@@ -159,9 +169,10 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
                     <Button
                         variant="contained"
                         sx={{ borderRadius: '25px' }}
-                        onClick={() => downloadFeatureAsExcel(feature)}
+                        onClick={() => refetch()}
+                        disabled={isFetching}
                     >
-                        <FileDownloadIcon />
+                        {isFetching ? <CircularProgress size={24} /> : <FileDownloadIcon />}
                     </Button>
                 </Box>
             </Box>

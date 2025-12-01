@@ -16,7 +16,7 @@ export default function ItemGeo({ fileName, geojson, rangeDate, map, markerShape
     const isVisible = visibility[fileName] ?? false;
 
     return (
-        map ? (<Card sx={{ maxWidth: 250, position: 'relative' }} variant="outlined">
+        map ? (<Card sx={{ maxWidth: 250, maxHeight: 140, position: 'relative' }} variant="outlined">
             <CardContent
                 onClick={() => {
                     toggleGeoJsonOnMap(map, geojson, fileName, markerShape, handleFeatureClick)

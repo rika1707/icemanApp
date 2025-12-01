@@ -16,14 +16,20 @@ export function downloadFeaturesAsExcel(features: Feature<Geometry, any>[], file
             const coords = geometry.coordinates as number[];
             if (typeof coords[0] === 'number') {
                 coordinates = {
-                    longitud: coords[0],
-                    latitud: coords[1],
+                    LONGITUD: coords[0], // Encabezado en mayúsculas
+                    LATITUD: coords[1],
                 };
             }
         }
 
+        // Modifica los nombres de las propiedades a mayúsculas
+        const newProperties: Record<string, any> = {};
+        Object.keys(properties || {}).forEach(key => {
+            newProperties[key.toUpperCase()] = properties[key];
+        });
+
         return {
-            ...properties,
+            ...newProperties,
             ...coordinates,
         };
     });
