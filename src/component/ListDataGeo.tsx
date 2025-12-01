@@ -122,7 +122,7 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
                         </Tabs>
                         <Box sx={{ mt: 2 }}>
                             {tabIndex === 0 && (
-                                <div className="h-56 overflow-auto bg-slate-200 text-black p-2 flex gap-1 flex-wrap">
+                                <div className="h-[150px] overflow-auto bg-slate-200 text-black p-2 flex gap-1 flex-wrap">
                                     {isLoading ? (
                                         CircularIndeterminate()
                                     ) : windsData && windsData.length > 0 ? (
@@ -137,7 +137,7 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
                                 </div>
                             )}
                             {tabIndex === 1 && (
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center", alignItems: "center", minHeight: 180 }}>
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center", alignItems: "center", minHeight: 150 }}>
                                     {empresasImg.map((img) => (
                                         <Box key={img.alt} sx={{ width: 80, height: 80, display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "#f3f3f3", borderRadius: 2 }}>
                                             <img src={img.src} alt={img.alt} style={{ maxWidth: "70px", maxHeight: "70px" }} />
