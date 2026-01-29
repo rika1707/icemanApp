@@ -35,7 +35,7 @@ function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" sx={{ bgcolor: 'var(--color-primary)' }}>
             <Container sx={{ mx: '0px !important', px: '0px !important', maxWidth: '100% !important' }}>
                 <Toolbar disableGutters>
                     <Box>
@@ -58,7 +58,6 @@ function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>
                         href="#app-bar-with-responsive-menu"
                         sx={{
                             mr: 2,
-                            fontFamily: 'monospace',
                             fontWeight: 700,
                             letterSpacing: '.3rem',
                             color: 'inherit',
@@ -72,11 +71,12 @@ function ResponsiveAppBar({ setOpen, open, setOpenLogin }: Readonly<AppBarProps>
                             ? <Button
                                 sx={{
                                     mr: 2,
+                                    bgcolor: 'var(--color-primary)',
+                                    color: 'white',
                                     '&:hover': {
-                                        backgroundColor: '#074dafff',
+                                        backgroundColor: 'var(--color-primary)',
                                     }
                                 }}
-                                color="inherit"
                                 onClick={() => setOpenLogin(true)}>
                                 Login
                             </Button>

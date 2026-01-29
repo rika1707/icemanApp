@@ -24,7 +24,7 @@ export const BaseMapSelector = ({ selectedMap, onChange, setOpenMap, openMap }: 
                 top: 50,
                 transition: 'right .3s ease',
                 right: `${openMap ? 0 : '-20%'}`,
-                backgroundColor: '#1976d1',
+                backgroundColor: 'var(--color-primary)',
                 opacity: 0.9,
             }}
         >
@@ -41,7 +41,7 @@ export const BaseMapSelector = ({ selectedMap, onChange, setOpenMap, openMap }: 
                 sx={{
                     m: 0,
                     '&:hover': {
-                        backgroundColor: '#074dafff',
+                        backgroundColor: 'var(--color-primary)',
                     }
                 }}
                 value="baseMap"
@@ -58,7 +58,7 @@ export const BaseMapSelector = ({ selectedMap, onChange, setOpenMap, openMap }: 
                 sx={{
                     m: 0,
                     '&:hover': {
-                        backgroundColor: '#074dafff',
+                        backgroundColor: 'var(--color-primary)',
                     }
                 }}
                 value="sateliteMap"

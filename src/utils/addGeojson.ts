@@ -41,7 +41,7 @@ export function toggleGeoJsonOnMap(
             if (markerShape === "circle-red") {
                 return L.circleMarker(latlng, {
                     radius: 5,
-                    fillColor: "#f00",
+                    fillColor: "#c0c0c0",
                     color: "#000",
                     weight: 1,
                     opacity: 1,
@@ -62,7 +62,7 @@ export function toggleGeoJsonOnMap(
             return L.marker(latlng); // fallback
         },
         onEachFeature: (feature, layer) => {
-            if (feature.properties?.station || feature.properties.estacion) {
+            if (feature.properties?.station || feature.properties.estacion || feature.properties.Estacion) {
                 layer.on({
                     click: (e) => {
                         L.DomEvent.stopPropagation(e);

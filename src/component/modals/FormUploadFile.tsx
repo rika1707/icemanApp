@@ -113,7 +113,7 @@ export default function UploadForm({ open, onClose }: Readonly<FormProps>) {
                 {/* Carga de archivo */}
                 <Box display="flex" alignItems="center" gap={1}>
                     <IconButton
-                        sx={{ backgroundColor: "#1976d2", color: "#fff" }}
+                        sx={{ backgroundColor: "primary.main", color: "#fff" }}
                         onClick={handleFileClick}
                     >
                         <FileUploadIcon />

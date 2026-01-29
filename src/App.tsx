@@ -1,6 +1,7 @@
 import SidebarWithMap from './component/SidebarWithMap'
 import './App.css'
 import ResponsiveAppBar from './component/AppBar'
+import HeaderImagesBar from './component/HeaderImagesBar'
 import { useState } from 'react'
 import Login from './component/modals/Login'
 import ListDataGeo from './component/ListDataGeo'
@@ -18,6 +19,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="main-map flex flex-col">
+        <HeaderImagesBar />
         <ResponsiveAppBar
           open={open}
           setOpen={setOpen}

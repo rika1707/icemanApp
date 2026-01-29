@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Tabs, Tab, Box, IconButton, Collapse } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { getMeteo } from "../request/get-meteo";
 
 const empresasImg = [
     // Puedes reemplazar estas rutas con las imágenes reales de las empresas
@@ -19,7 +20,14 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
     const [tabIndex, setTabIndex] = useState(0);
     const [open, setOpen] = useState(false);
     const [windsData, setWindsData] = useState<GeojsonProps[] | null>(null);
+    const [wavesData, setWavessData] = useState<GeojsonProps[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const { data: waves, isLoading: loadingWaves } = useQuery<GeojsonProps[] | null>({
+        queryKey: ['wavesData', isWavesActive],
+        queryFn: getMeteo,
+        enabled: isWavesActive,
+    });
 
     const { data, isLoading: queryLoading } = useQuery<GeojsonProps[] | null>({
         queryKey: ['windsData', isWindsActive],
@@ -27,15 +35,28 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
         enabled: isWindsActive,
     });
 
+
+    // Efecto para controlar la apertura/cierre y limpieza de datos según la capa activa
     useEffect(() => {
         if (isWindsActive) {
-            setOpen(true); // Abrir panel por defecto si hay datos
-            setTabIndex(0); // Seleccionar pestaña "Datos" por defecto
+            setOpen(true);
+            setTabIndex(0);
+            setWavessData(null); // Limpiar datos de olas
         } else {
             setWindsData(null);
-            setOpen(false); // Cierra los tabs si isWindsActive es false
+            setOpen(false);
         }
     }, [isWindsActive]);
+
+    useEffect(() => {
+        if (isWavesActive) {
+            setOpen(true);
+            setTabIndex(0);
+            setWindsData(null); // Limpiar datos de viento
+        } else {
+            setWavessData(null);
+        }
+    }, [isWavesActive]);
 
     useEffect(() => {
         if (data) {
@@ -43,6 +64,13 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
         }
         setIsLoading(queryLoading);
     }, [data, queryLoading]);
+
+    useEffect(() => {
+        if (waves) {
+            setWavessData(waves);
+        }
+        // loadingWaves se usa solo si olas está activo
+    }, [waves, loadingWaves]);
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
@@ -67,13 +95,13 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
                     sx={{
                         position: "relative",
                         top: 0,
-                        bgcolor: "#1976d2",
+                        bgcolor: "var(--color-primary)",
                         color: "white",
                         boxShadow: 1,
                         mb: open ? 1 : 0,
                         transition: "margin-bottom 0.3s",
                         '&:hover': {
-                            bgcolor: "#115293",
+                            bgcolor: "var(--color-primary)",
                         }
                     }}
                     onClick={() => setOpen(!open)}
@@ -123,15 +151,33 @@ const ListDataGeo = ({ isWavesActive, isWindsActive, map }: ListGeojsonProps) =>
                         <Box sx={{ mt: 2 }}>
                             {tabIndex === 0 && (
                                 <div className="h-[150px] overflow-auto bg-slate-200 text-black p-2 flex gap-1 flex-wrap">
-                                    {isLoading ? (
-                                        CircularIndeterminate()
-                                    ) : windsData && windsData.length > 0 ? (
-                                        windsData.map((wind: GeojsonProps) => (
-                                            <ItemGeo key={wind.fileName} {...wind} map={map} markerShape="circle-blue" />
-                                        ))
+                                    {isWavesActive ? (
+                                        loadingWaves ? (
+                                            CircularIndeterminate()
+                                        ) : wavesData && wavesData.length > 0 ? (
+                                            wavesData.map((wave: GeojsonProps) => (
+                                                <ItemGeo key={wave.fileName} {...wave} map={map} markerShape="circle-red" />
+                                            ))
+                                        ) : (
+                                            <Box sx={{ width: "100%", textAlign: "center", color: "gray", mt: 4 }}>
+                                                Aún no hay elementos cargados.
+                                            </Box>
+                                        )
+                                    ) : isWindsActive ? (
+                                        isLoading ? (
+                                            CircularIndeterminate()
+                                        ) : windsData && windsData.length > 0 ? (
+                                            windsData.map((wind: GeojsonProps) => (
+                                                <ItemGeo key={wind.fileName} {...wind} map={map} markerShape="circle-blue" />
+                                            ))
+                                        ) : (
+                                            <Box sx={{ width: "100%", textAlign: "center", color: "gray", mt: 4 }}>
+                                                Aún no hay elementos cargados.
+                                            </Box>
+                                        )
                                     ) : (
                                         <Box sx={{ width: "100%", textAlign: "center", color: "gray", mt: 4 }}>
-                                            Aún no hay elementos cargados.
+                                            Selecciona una capa para ver los datos.
                                         </Box>
                                     )}
                                 </div>

@@ -61,7 +61,7 @@ const SidebarWithMap = ({ open, setOpen, setMap: setParentMap, setIsWavesActivat
   ];
 
   const dataTypes = [
-    //{ name: 'Olas', icon: <WavesIcon />, active: isWavesActive },
+    { name: 'Olas', icon: <WavesIcon />, active: isWavesActive },
     { name: 'Viento', icon: <WindPowerIcon />, active: isWindsActive }
   ];
 
@@ -78,7 +78,7 @@ const SidebarWithMap = ({ open, setOpen, setMap: setParentMap, setIsWavesActivat
             width: 160,
             borderTop: '1px solid',
             boxSizing: 'border-box',
-            backgroundColor: '#1976d2',
+            backgroundColor: 'var(--color-primary)',
             color: 'white',
             padding: 1,
             position: 'absolute',
@@ -100,7 +100,7 @@ const SidebarWithMap = ({ open, setOpen, setMap: setParentMap, setIsWavesActivat
             my: .5,
             '&:hover': {
               borderRadius: '8px',
-              backgroundColor: '#074dafff',
+              backgroundColor: 'var(--color-primary)',
             }
           }} onClick={() => setOpenForm(true)}>
             <FileUploadIcon />
@@ -177,7 +177,7 @@ const SidebarWithMap = ({ open, setOpen, setMap: setParentMap, setIsWavesActivat
             top: 16,
             right: 16,
             zIndex: 1200,
-            backgroundColor: '#1976d1',
+            backgroundColor: 'var(--color-primary)',
             opacity: 0.9,
             color: 'white',
             '&:hover': {

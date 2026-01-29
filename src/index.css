@@ -1,6 +1,16 @@
+/* Forzar fuente global en todos los elementos */
+*, *::before, *::after {
+  font-family: var(--font-main), system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+}
+
 @import "tailwindcss";
+
+/* =============================
+   Variables y estilos globales
+   ============================= */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --color-primary: #1c3d71;
+  --font-main: 'Open Sans', 'sans-serif';
   line-height: 1.5;
   font-weight: 400;
 
@@ -15,6 +25,7 @@
 }
 
 html, body {
+  font-family: var(--font-main), system-ui, Avenir, Helvetica, Arial, sans-serif !important;
   width: 100vw;
   height: 100vh;
   padding: 0;

@@ -10,12 +10,15 @@ interface ButtonProps {
 }
 
 export default function CustomButton({ features }: Readonly<ButtonProps>) {
-    const year: string = features[0].properties.fecha.split('-')[0];
+    const dateData: string | undefined = features[0]?.properties?.fecha;
+    const year: string | undefined = dateData ? dateData.split('-')[0] : undefined;
 
     const { isFetching, refetch } = useQuery({
         queryKey: ['downloadExcel', year],
         queryFn: async () => {
-            await downloadExcelByYear(year);
+            if (year) {
+                await downloadExcelByYear(year);
+            }
         },
         enabled: false, // Solo ejecuta cuando se presiona el botón
     });
@@ -33,7 +36,7 @@ export default function CustomButton({ features }: Readonly<ButtonProps>) {
                 }
             }}
             onClick={() => refetch()}
-            disabled={isFetching}
+            disabled={isFetching || !year}
         >
             {isFetching ? <CircularProgress size={24} /> : <FileDownloadIcon />}
         </IconButton>

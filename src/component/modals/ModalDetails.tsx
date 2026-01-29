@@ -23,7 +23,7 @@ import {
 import { getDepthByStation } from '../../request/get-depth-by-station';
 import { useQuery } from '@tanstack/react-query';
 
-const keyExclude: string[] = ['objectid', 'globalid', 'created_date_ms', 'last_edited_date_ms']
+const keyExclude: string[] = ['objectid', 'globalid', 'created_date_ms', 'last_edited_date_ms', 'OBJECTID', 'GlobalID', 'created_user', 'created_date', 'last_edited_user', 'last_edited_date'];
 
 interface ModalProps {
     open: boolean;
@@ -88,7 +88,7 @@ const ModalDetails: React.FC<ModalProps> = ({ open, onClose, feature, features =
             <Box sx={style} className="bg-slate-200">
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
-                        Estación: {currentFeature.properties?.station ?? currentFeature.properties?.estacion}
+                        Estación: {currentFeature.properties?.station ?? currentFeature.properties?.estacion ?? currentFeature.properties?.Estacion}
                     </Typography>
                     <IconButton onClick={onClose}>
                         <CloseIcon />
